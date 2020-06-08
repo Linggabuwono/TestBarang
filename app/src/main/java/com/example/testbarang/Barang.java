@@ -27,6 +27,10 @@ public class Barang implements Serializable {
                 " "+nama;
     }
 
+    public String getNama(){
+        return nama;
+    }
+
     public Barang( String kd, String nm) {
         kode = kd;
         nama = nm;
