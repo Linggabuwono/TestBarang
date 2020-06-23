@@ -6,9 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class LihatBarang extends AppCompatActivity {
+public class LihatBarang extends AppCompatActivity implements AdapterLihatBarang.FirebaseDataListener {
 
     /*** Mendefinisikan variable yang akan dipakai*/
     private DatabaseReference database;
@@ -25,6 +29,8 @@ public class LihatBarang extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Barang> daftarBarang;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +54,7 @@ public class LihatBarang extends AppCompatActivity {
 
             /*** Saat ada data baru, masukkan datanya ke ArrayList */
             daftarBarang = new ArrayList<>();
-            for (DataSnapshot noteDataSnapshot :
-                    dataSnapshot.getChildren()) {
+            for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
 
                 /*** Mapping data pada DataSnapshot ke dalam object Barang. Dan juga menyimpan primary key pada object Barang untuk keperluan Edit dan Delete data*/
                 Barang barang = noteDataSnapshot.getValue(Barang.class);
@@ -59,7 +64,7 @@ public class LihatBarang extends AppCompatActivity {
                 daftarBarang.add(barang);
             }
 
-            /*** Inisialisasi adapter dan data barang dalam bentuk ArrayList dan mengeset Adapter ke dalam RecyclerView                  */
+            /*** Inisialisasi adapter dan data barang dalam bentuk ArrayList dan mengeset Adapter ke dalam RecyclerView*/
             adapter = new AdapterLihatBarang(daftarBarang, LihatBarang.this);
             rvView.setAdapter(adapter);
         }
@@ -72,8 +77,26 @@ public class LihatBarang extends AppCompatActivity {
             }
         });
     }
+
     public static Intent getActIntent(Activity activity){
         return new Intent(activity, LihatBarang.class);
+    }
+
+    public void onDeleteData(Barang barang, final int position) {
+        /**
+         * Kode ini akan dipanggil ketika method onDeleteData
+         * dipanggil dari adapter lewat interface.
+         * Yang kemudian akan mendelete data di Firebase Realtime DB
+         * berdasarkan key barang.
+         * Jika sukses akan memunculkan Toast
+         */
+        if(database!=null){database.child("Barang").child(barang.getKode()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(LihatBarang.this,"success delete", Toast.LENGTH_LONG).show();
+            }
+        });
+        }
     }
 }
 

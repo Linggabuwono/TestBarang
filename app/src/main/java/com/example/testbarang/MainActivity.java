@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
     private Button bTambah;
     private Button bLihat;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         bTambah = (Button) findViewById(R.id.btnTambah);
         bLihat = (Button) findViewById(R.id.btnLihat);
+
 
         bTambah.setOnClickListener(new View.OnClickListener() {
             @Override
